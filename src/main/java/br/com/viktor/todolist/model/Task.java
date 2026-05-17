@@ -21,7 +21,7 @@ public class Task {
     private String description;
 
     @Column(length = 50)
-    private  String title;
+    private String title;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private String priority;
