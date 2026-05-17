@@ -26,7 +26,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String servletPath = request.getServletPath();
-        if (servletPath.equals("/tasks/create")) {
+        if (servletPath.startsWith("/tasks/")) {
             // Primeiro temos que pegar a autenticação do usuário (user and password)
             String authorizationHeader = request.getHeader("Authorization");
             // identificar o tipo de autenticação (Basic)
