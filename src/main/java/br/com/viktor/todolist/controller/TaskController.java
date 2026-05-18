@@ -20,7 +20,6 @@ import br.com.viktor.todolist.model.Task;
 import br.com.viktor.todolist.repository.ITaskRepository;
 import br.com.viktor.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/tasks")
@@ -58,9 +57,26 @@ public class TaskController {
     }
 
     @PutMapping("/update/{id}")
-    public Task Update(@RequestBody Task task, HttpServletRequest request, @PathVariable UUID id) {
+    public ResponseEntity Update(@RequestBody Task task, HttpServletRequest request, @PathVariable UUID id) {
+        System.out.println("cheguei começo do controler");
         var taskExist = this.taskRepository.findById((UUID) id).orElse(null);
+        if (taskExist == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Tarefa Não encontrada");
+        }
+        System.out.println("passou diferente de null");
+
+        var idUser = request.getAttribute("idUser");
+        System.out.println(idUser);
+        System.out.println(task.getIdUser());
+
+        if (!taskExist.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para alterar esta tarefa");
+        }
+        System.out.println("usuario tem parmissão");
         Utils.copyNonNullProperties(task, taskExist);
-        return  this.taskRepository.save(taskExist);
+        var taskUpdated = this.taskRepository.save(taskExist);
+        return ResponseEntity.ok().body(taskUpdated);
     }
 }
