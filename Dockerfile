@@ -1,15 +1,25 @@
-FROM ubuntu:latest AS build
+FROM ubuntu:latest as build
 
 RUN apt-get update
 RUN apt-get install openjdk-21-jdk -y
+RUN apt-get install maven -y
+
+WORKDIR /app
 
 COPY . .
 
-RUN apt-get install maven -y
 RUN mvn clean install
 
-EXPOSE 8080
+# segundo estágio
+FROM ubuntu:latest
 
-COPY --from=build /target/todolist-1.0.0.jar app.jar
+RUN apt-get update
+RUN apt-get install openjdk-21-jre -y
+
+WORKDIR /app
+
+COPY --from=build /app/target/todolist-1.0.0.jar app.jar
+
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
