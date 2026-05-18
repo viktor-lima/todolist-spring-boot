@@ -14,9 +14,9 @@ import lombok.Data;
 @Data
 @Entity(name = "tb_tasks")
 public class Task {
-    
+
     @Id
-    @GeneratedValue(generator="UUID")
+    @GeneratedValue(generator = "UUID")
     private UUID id;
     private String description;
 
@@ -30,5 +30,12 @@ public class Task {
     private LocalDateTime createdAt;
 
     private UUID idUser;
+
+    public void setTitle(String title) {
+        if (title.length() > 50) {
+            throw new IllegalArgumentException("O campo title deve conter no máximo 50 caracteres");
+        }
+        this.title = title;
+    }
 
 }
